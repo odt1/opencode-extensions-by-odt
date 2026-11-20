@@ -1,0 +1,29 @@
+name: opencode-desktop-markdown-colors
+repo: https://github.com/odt1/opencode-extensions-by-odt/tree/main/packages/opencode-desktop-markdown-colors
+tagline: CLI-style markdown colors in OpenCode Desktop, following the active theme
+description: >-
+  OpenCode Desktop's theme engine already emits the CLI's markdown tokens on
+  :root — heading, code, link, strong, emph, list, quote, rule — but its own
+  stylesheet never reads them, so headings, inline code and list markers render
+  as one flat text color no matter which theme is selected. This GUI plugin adds
+  one stylesheet that wires those tokens to the elements, scoped with :root to
+  outrank the app's rules without !important, and restores the muted look the
+  app intends for reasoning blocks. Requires OpenCode Desktop 2.3.0 or newer
+  (V2 only). No dependencies, no build step.
+scope:
+  - global
+tags:
+  - desktop
+  - markdown
+  - theme
+  - colors
+  - appearance
+min_version: "2.3.0"
+homepage: https://www.npmjs.com/package/opencode-desktop-markdown-colors
+installation: |-
+  ```sh
+  opencode plugin add opencode-desktop-markdown-colors
+  ```
+
+  Restart OpenCode Desktop once. Colors follow whichever theme is selected in
+  Settings › Appearance, and leave the theme's own accents untouched.

@@ -1,14 +1,15 @@
 # opencode-extensions-by-odt
 
-Four [OpenCode](https://opencode.ai) plugins, maintained in one repository: a `/cd` command for Desktop, a session status pill, a theme background override, and a DeepSeek behaviour adaptation.
+Five [OpenCode](https://opencode.ai) plugins, maintained in one repository: a `/cd` command for Desktop, a session status pill, a theme background override, CLI-style markdown colors, and a DeepSeek behaviour adaptation.
 
-All four target **OpenCode V2**. Three are **Desktop** GUI plugins and need OpenCode Desktop 2.3.0 or newer; the DeepSeek adaptation is a server plugin and works in any V2 client.
+All five target **OpenCode V2**. Four are **Desktop** GUI plugins and need OpenCode Desktop 2.3.0 or newer; the DeepSeek adaptation is a server plugin and works in any V2 client.
 
 | Plugin | What it does | Where it shows |
 |---|---|---|
 | [opencode-desktop-cd](packages/opencode-desktop-cd) | `/cd` moves the current session to another directory, and with it to that directory's project — the command the CLI has and Desktop does not | Desktop |
 | [opencode-status-pill](packages/opencode-status-pill) | Context fill, cache hit rate and OpenRouter balance in the pill row above the composer | Desktop |
 | [opencode-theme-background](packages/opencode-theme-background) | Repaints the background of whichever theme is selected, without replacing the theme | Desktop |
+| [opencode-desktop-markdown-colors](packages/opencode-desktop-markdown-colors) | Wires the theme's markdown tokens to headings, inline code, links, lists and quotes, which the app's own stylesheet ignores | Desktop |
 | [opencode-deepseek-adapt](packages/opencode-deepseek-adapt) | DeepSeek-tuned prompt doctrine, subagent hand-off, repeat-call guard, clock, todo nudge, empty-reply recovery | CLI and Desktop |
 
 ## Install
@@ -21,6 +22,7 @@ Each plugin is its own npm package. Install the ones you want:
 opencode plugin add opencode-desktop-cd
 opencode plugin add opencode-status-pill
 opencode plugin add opencode-theme-background
+opencode plugin add opencode-desktop-markdown-colors
 opencode plugin add opencode-deepseek-adapt
 ```
 
@@ -65,15 +67,16 @@ A bare directory path is not something `opencode plugin add` accepts — it take
 
 ```
 packages/
-  opencode-desktop-cd/        GUI plugin: /cd command
-  opencode-status-pill/       GUI plugin: composer pill
-  opencode-theme-background/  GUI plugin: background Style
-  opencode-deepseek-adapt/    server plugin: request-time prompt additions
+  opencode-desktop-cd/                GUI plugin: /cd command
+  opencode-status-pill/               GUI plugin: composer pill
+  opencode-theme-background/          GUI plugin: background Style
+  opencode-desktop-markdown-colors/   GUI plugin: markdown token wiring
+  opencode-deepseek-adapt/            server plugin: request-time prompt additions
 ```
 
-One npm package per directory. npm workspaces hoist a single install and a single lockfile to the root; every package is versioned and published independently.
+One npm package per directory, and the plugin id inside each package is the same string as the package name — the id prefixes every contribution id and stored key the plugin creates, so two names for one plugin is a bug waiting to happen.
 
-The three GUI plugins follow the same shape: a server part (`src/index.js`) that exists only because Desktop loads a plugin's GUI only when its server part loads, and a `./gui-experimental` bundle built by `@opencode/plugin/gui/vite` into one CommonJS file at `dist/gui-experimental.cjs`. That bundle is committed, because `opencode plugin add` installs with lifecycle scripts disabled — a `prepare` script would never run.
+The four GUI plugins follow the same shape: a server part (`src/index.js`) that exists only because Desktop loads a plugin's GUI only when its server part loads, and a `./gui-experimental` bundle built by `@opencode/plugin/gui/vite` into one CommonJS file at `dist/gui-experimental.cjs`. That bundle is committed, because `opencode plugin add` installs with lifecycle scripts disabled — a `prepare` script would never run.
 
 `packages/*/AGENTS.md` holds the notes that are not visible from the code: API findings, SDK traps, and why each decision was made. `docs/` holds the release checklist and ready-to-submit list entries.
 
