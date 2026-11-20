@@ -13,6 +13,8 @@ All four target **OpenCode V2**. Three are **Desktop** GUI plugins and need Open
 
 ## Install
 
+> **Release status:** not on npm yet. Until `0.1.0` is published, install from a clone — see below.
+
 Each plugin is its own npm package. Install the ones you want:
 
 ```sh
@@ -40,11 +42,10 @@ Options, requirements and caveats are in each package's README, linked above.
 
 ### Installing from a clone
 
-Every package also works from a local checkout — useful for development, or when you want to pin exactly what you are running. The GUI bundles are committed, so a clone only needs the one runtime dependency:
+Every package also works from a local checkout — useful for development, or when you want to pin exactly what you are running. The GUI bundles are committed and no package declares a runtime dependency, so a clone needs no install and no build:
 
 ```sh
 git clone https://github.com/odt1/opencode-extensions-by-odt ~/Projects/opencode-extensions-by-odt
-cd ~/Projects/opencode-extensions-by-odt && npm install --omit=dev --workspaces
 ```
 
 Then point `opencode.json` at the package directory, by absolute path:

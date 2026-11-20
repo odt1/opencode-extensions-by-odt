@@ -57,6 +57,8 @@ git tag -a v0.1.0 -m "first public release" && git push origin v0.1.0
 
 Later releases bump only the packages that changed, with their own tags (`opencode-status-pill@0.2.0`), so the tag says which package moved.
 
+Finally, remove the **"Release status: not on npm yet"** note at the top of the root README's Install section, and commit that with the tag.
+
 ## 4. Verify the published packages, not the local ones
 
 A clean config is the only proof. In a temporary `XDG_CONFIG_HOME` (or by backing up `~/.config/opencode/opencode.json`):
