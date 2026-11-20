@@ -11,7 +11,14 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # Windows is not decoration: npm runs scripts through cmd.exe there, and a
+    # POSIX-only check would pass on Linux while making `npm run check` and
+    # `npm publish` unusable on a Windows checkout.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
 

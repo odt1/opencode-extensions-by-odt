@@ -1,6 +1,7 @@
 import { Command, Plugin } from "@opencode/plugin/gui"
 
-const isAbsolute = (path: string) => path.startsWith("/") || /^[A-Za-z]:[\\/]/.test(path)
+const isAbsolute = (path: string) =>
+  path.startsWith("/") || /^[A-Za-z]:[\\/]/.test(path) || path.startsWith("\\\\")
 
 const reason = (cause: unknown) => {
   if (cause instanceof Error && cause.message) return cause.message

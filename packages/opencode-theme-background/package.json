@@ -36,7 +36,7 @@
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
     "test": "node --test src/background.test.ts",
-    "prepublishOnly": "npm run typecheck && npm test && npm run build && (test -z \"$(git status --porcelain -- dist/)\" || (echo 'dist/ is stale or untracked: commit the rebuilt bundle before publishing' && exit 1))"
+    "prepublishOnly": "npm run typecheck && npm test && npm run build && (node ../../script/check-dist.mjs dist)"
   },
   "devDependencies": {
     "@opencode/plugin": "^2.3.0",

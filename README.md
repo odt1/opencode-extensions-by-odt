@@ -61,7 +61,7 @@ Then point `opencode.json` at the package directory, by absolute path:
 }
 ```
 
-A bare directory path is not something `opencode plugin add` accepts — it takes a registry or Git specifier — so this route is a config edit.
+On Windows the same entry takes the native path, with backslashes escaped for JSON: `"C:\\Users\\you\\Projects\\opencode-extensions-by-odt\\packages\\opencode-status-pill"`. A bare directory path is not something `opencode plugin add` accepts — it takes a registry or Git specifier — so this route is a config edit.
 
 ## How the repository is laid out
 

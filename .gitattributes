@@ -1,0 +1,8 @@
+# Normalise line endings so a clone on Windows produces the same bytes as one on
+# macOS or Linux. Without this, `dist/` is checked out with CRLF, a rebuild emits
+# LF, and the stale-bundle check fails on a bundle that is actually current.
+* text=auto eol=lf
+
+# Committed build output: text, but never rewritten on checkout.
+dist/*.cjs text eol=lf
+*.mjs text eol=lf
