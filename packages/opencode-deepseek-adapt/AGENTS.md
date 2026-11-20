@@ -9,7 +9,8 @@ src/index.js          the whole plugin: one default `{ id, setup }` object
 test/smoke.mjs        node --test-free assertion runner against a fake plugin context
 ```
 
-- No dependencies, no build step, no bundler. `@opencode/plugin` is deliberately **not** imported: the module schema in `core/plugin/module.ts` only requires `default` to be `{ id, setup }`, and `Plugin.define` is an identity function. Keeping the import out is what makes the npm tarball 30 KB instead of 250 MB.
+- No dependencies, no build step, no bundler. `@opencode/plugin` is deliberately **not** imported at runtime: the module schema in `core/plugin/module.ts` only requires `default` to be `{ id, setup }`, and `Plugin.define` is an identity function. Keeping the import out is what makes the npm tarball 30 KB instead of 250 MB. It is a devDependency for `tsc` only.
+- `npm run typecheck` runs `tsc` over the JavaScript (`checkJs`). Annotate the boundary — `setup(ctx)` and every helper that receives `ctx` — with `import("@opencode/plugin").Plugin.Context`. Without that annotation the helpers take `any`, and the checker stops proving anything: it once passed a `(await ctx.session.context(...))?.data` that read `.data` off an array.
 - Every hook body goes through `guard()`, which logs once and swallows. A plugin bug must never fail a model request.
 - Options are validated in `resolveOptions`. A wrong type, a value under the minimum, or an unknown `dialectMode` falls back to the default instead of throwing.
 - Per-session maps are capped at 500 entries. Do not add an uncapped `Map` keyed by session or message id.
@@ -21,7 +22,7 @@ test/smoke.mjs        node --test-free assertion runner against a fake plugin co
 npm test -w opencode-deepseek-adapt
 ```
 
-32 cases, no OpenCode process, no network. New behaviour belongs in `test/smoke.mjs`; the failures it catches are the silent ones (a nudge that fires twice, a prompt addition that is not idempotent, an escaping hole).
+35 cases, no OpenCode process, no network. New behaviour belongs in `test/smoke.mjs`; the failures it catches are the silent ones (a nudge that fires twice, a prompt addition that is not idempotent, an escaping hole).
 
 ## Before publishing
 

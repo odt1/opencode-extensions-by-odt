@@ -76,9 +76,11 @@ const DEFAULTS = {
 const resolveOptions = (input) => {
   const merged = { ...DEFAULTS, ...(input ?? {}) }
   const flag = (key) => (typeof merged[key] === "boolean" ? merged[key] : DEFAULTS[key])
+  // `typeof` rather than `Number(...)`: `Number(true)` and `Number("12")` both
+  // produce a plausible number, and a wrong type must fall back, not coerce.
   const count = (key, minimum) => {
-    const value = Number(merged[key])
-    return Number.isFinite(value) && value >= minimum ? value : DEFAULTS[key]
+    const value = merged[key]
+    return typeof value === "number" && Number.isFinite(value) && value >= minimum ? value : DEFAULTS[key]
   }
   return {
     dialect: flag("dialect"),
@@ -107,7 +109,7 @@ const resolveOptions = (input) => {
 
 /** Closing tags this plugin quotes back must not be able to end their own frame. */
 const sanitize = (text) =>
-  String(text).replace(/<\/(system-reminder|system-injection|system-interrupt)\s*>/gi, (tag) => `<\\${tag.slice(1)}`)
+  String(text).replace(/<\/(system-reminder|system-injection|system-interrupt)\s*\/?>/gi, (tag) => `<\\${tag.slice(1)}`)
 
 const canonical = (value) => {
   if (value === undefined) return "null"
@@ -127,8 +129,13 @@ const stable = (value) => {
   }
 }
 
+/**
+ * Whether the request is served by a model the dialect targets. `event.model`
+ * is a `Model.Ref` — `{ id, providerID, variant }` — so the id is the only
+ * field that carries the model's identity.
+ */
 const targets = (options, model) => {
-  const ids = [model?.id, model?.modelID, model?.family].join(" ").toLowerCase()
+  const ids = String(model?.id ?? "").toLowerCase()
   return options.models.some((needle) => ids.includes(String(needle).toLowerCase()))
 }
 
@@ -153,14 +160,21 @@ const guard = (name, handler) => async (event) => {
   try {
     await handler(event)
   } catch (error) {
-    const message = `${name}: ${error?.message ?? error}`
+    // `error` is `unknown`: a request path must not assume what was thrown.
+    const detail = error instanceof Error ? error.message : String(error)
+    const message = `${name}: ${detail}`
     if (warned.has(message)) return
     warned.add(message)
     console.warn(`[deepseek-adapt] ${message}`)
   }
 }
 
-/** The agent behind one request, or undefined when the lookup is unavailable. */
+/**
+ * The agent behind one request, or undefined when the lookup is unavailable.
+ *
+ * @param {import("@opencode/plugin").Plugin.Context} ctx
+ * @returns {Promise<{ system?: string; mode?: string } | undefined>}
+ */
 const agentOf = async (ctx, event) => {
   try {
     return (await ctx.agent.get({ agentID: event.agent }))?.data
@@ -396,9 +410,15 @@ const EMPTY_NUDGE = (attempt, max) =>
 const isAssistant = (message) => message?.type === "assistant" || message?.role === "assistant"
 const isUser = (message) => message?.type === "user" || message?.role === "user"
 
-/** A part the user can act on: visible text or a tool call. An empty text part is neither. */
+/**
+ * A part the user can act on: visible text or a tool call.
+ *
+ * These are stored `SessionMessageInfo` parts, where a tool call is
+ * `type: "tool"`. `"tool-call"` is the request-side name in `event.messages`,
+ * which is why `repeatedCall` and `todoNudge` use that one.
+ */
 const isAnswer = (part) => {
-  if (part?.type === "tool-call") return true
+  if (part?.type === "tool") return true
   return part?.type === "text" && typeof part.text === "string" && part.text.trim().length > 0
 }
 
@@ -420,13 +440,20 @@ const isStalled = (messages) => {
   return false
 }
 
+/**
+ * @param {import("@opencode/plugin").Plugin.Context} ctx
+ * @param {ReturnType<typeof resolveOptions>} options
+ * @param {Map<string, { count: number; at: number }>} stalled
+ */
 const emptyReplyHook = (ctx, options, stalled) => async (event) => {
   if (!options.emptyRecovery) return
   // Background work will report on its own; a nudge now would race with it.
   if ((event.background?.length ?? 0) > 0) return
   let messages
   try {
-    messages = (await ctx.session.context({ sessionID: event.sessionID }))?.data
+    // `session.context` resolves to the message array. `agent.get` is the call
+    // that returns an envelope — do not copy its `.data` here.
+    messages = await ctx.session.context({ sessionID: event.sessionID })
   } catch {
     return
   }
@@ -441,7 +468,9 @@ const emptyReplyHook = (ctx, options, stalled) => async (event) => {
   const prior = stalled.get(event.sessionID)
   const state = prior === undefined || now - prior.at > options.emptyRecoveryWindowMs ? { count: 0 } : prior
   if (state.count >= options.emptyRecoveryMax) return
-  remember(stalled, event.sessionID, { count: state.count + 1, at: now })
+  const next = { count: state.count + 1, at: now }
+  // Recorded before the await so two idle events cannot both nudge one stall.
+  remember(stalled, event.sessionID, next)
 
   try {
     await ctx.session.synthetic({
@@ -450,7 +479,12 @@ const emptyReplyHook = (ctx, options, stalled) => async (event) => {
       resume: true,
     })
   } catch {
-    // A busy or closed session keeps its own error; recovery is optional.
+    // A busy or closed session keeps its own error, and the refusal must not
+    // spend the budget: put the state back so a later idle can still recover.
+    if (stalled.get(event.sessionID) === next) {
+      if (prior === undefined) stalled.delete(event.sessionID)
+      else remember(stalled, event.sessionID, prior)
+    }
   }
 }
 
@@ -506,6 +540,7 @@ const whisper = (text) => ({ role: "user", content: [{ type: "text", text }] })
 
 export default {
   id: "opencode-deepseek-adapt",
+  /** @param {import("@opencode/plugin").Plugin.Context} ctx */
   async setup(ctx) {
     const options = resolveOptions(ctx.options)
     const loops = new Map()
@@ -538,7 +573,11 @@ export default {
 
       if (!options.loopGuard) return
       const call = repeatedCall(event.messages, loopLimit)
-      const threshold = call === undefined ? -1 : crossedThreshold(options, call.count)
+      if (call === undefined) {
+        loops.delete(event.sessionID)
+        return
+      }
+      const threshold = crossedThreshold(options, call.count)
       if (threshold < 0) {
         loops.delete(event.sessionID)
         return

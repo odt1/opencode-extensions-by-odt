@@ -5,6 +5,9 @@ node_modules/
 .DS_Store
 *.log
 
+# Local tool state (deja's index of past sessions)
+.deja/
+
 # `dist/` is deliberately NOT ignored: the GUI bundles are committed so a
 # clone or a Git-based install runs without a build step. `npm run check:dist`
 # fails when a committed bundle is stale.

@@ -278,7 +278,7 @@ A plugin, registered in `~/.config/opencode/opencode.json`, with six features:
 | `clock` | `context/time-context` | opencode injects the date and nothing else |
 | `emptyRecovery` | dsh `EMPTY_RESPONSE`, omp empty-stop retry | A turn ending with no text and no tool call simply stopped |
 
-Verify with `node test/smoke.mjs` (32 cases, fake plugin context).
+Verify with `node test/smoke.mjs` (35 cases, fake plugin context).
 
 Design constraints it respects: everything lands at the tail of the request so the cached prefix is untouched; the dialect is appended once (marker-guarded) and skipped for agents with a custom system prompt, mirroring opencode's own dialect plugins; quoted tool arguments are escaped so they cannot close a `<system-reminder>` frame.
 

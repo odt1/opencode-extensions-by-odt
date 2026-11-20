@@ -85,7 +85,7 @@ Options are merged over the defaults below, so an omitted key keeps its default.
 | `emptyRecoveryWindowMs` | `600000` | Gap that resets the recovery count |
 | `loopGuard` | `true` | Inject repeat-tool-call reminders |
 | `clock` | `true` | Inject sampled time and elapsed time |
-| `models` | `["deepseek"]` | Case-insensitive substrings matched against model id, modelID and family. Gates `dialect` only |
+| `models` | `["deepseek"]` | Case-insensitive substrings matched against the model id. Gates `dialect` only |
 | `loopGentle` | `3` | First reminder threshold |
 | `loopDetailed` | `5` | Names the tool, run length and arguments |
 | `loopStrong` | `8` | Adds "change action now" |
@@ -122,7 +122,7 @@ or run with `OPENCODE_FLAGS=todo` for a single launch. Restart OpenCode afterwar
 ## Verify
 
 ```sh
-npm test -w opencode-deepseek-adapt   # 32 cases against a fake plugin context, no OpenCode process needed
+npm test -w opencode-deepseek-adapt   # 35 cases against a fake plugin context, no OpenCode process needed
 ```
 
 ## Known limits

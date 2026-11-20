@@ -33,6 +33,12 @@
   ],
   "scripts": {
     "test": "node test/smoke.mjs",
-    "prepublishOnly": "npm test"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@opencode/plugin": "^2.3.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.7.0"
   }
 }
