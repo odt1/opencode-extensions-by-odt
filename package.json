@@ -1,0 +1,23 @@
+{
+  "name": "opencode-extensions-by-odt",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OpenCode plugins by odt1: /cd, session status pill, theme background, DeepSeek adaptation.",
+  "license": "MIT",
+  "author": "odt1",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "check": "npm run typecheck && npm test && npm run build && npm run check:dist",
+    "check:dist": "git diff --quiet -- packages/*/dist || (echo 'dist/ is stale: rebuild and commit the bundles' && exit 1)",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "pack:dry": "npm pack --workspaces --dry-run"
+  }
+}
