@@ -1,0 +1,50 @@
+{
+  "name": "opencode-status-pill",
+  "version": "0.1.0",
+  "description": "Context, cache and cost readout for OpenCode Desktop, in the pill row above the composer.",
+  "license": "MIT",
+  "author": "odt1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odt1/opencode-extensions-by-odt.git",
+    "directory": "packages/opencode-status-pill"
+  },
+  "homepage": "https://github.com/odt1/opencode-extensions-by-odt/tree/main/packages/opencode-status-pill#readme",
+  "bugs": {
+    "url": "https://github.com/odt1/opencode-extensions-by-odt/issues"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./gui-experimental": "./dist/gui-experimental.cjs"
+  },
+  "files": [
+    "dist/gui-experimental.cjs",
+    "src/index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "opencode-desktop",
+    "statusline",
+    "context",
+    "cache",
+    "cost"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/gui/metrics.test.ts",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build && (git diff --quiet -- dist/ || (echo 'dist/ is stale: commit the rebuilt bundle before publishing' && exit 1))"
+  },
+  "devDependencies": {
+    "@opencode/plugin": "^2.3.0",
+    "@types/node": "^24.0.0",
+    "solid-js": "^1.9.0",
+    "typescript": "^5.7.0",
+    "vite": "^7.0.0",
+    "vite-plugin-solid": "^2.11.0"
+  }
+}
