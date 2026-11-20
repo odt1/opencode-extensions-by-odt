@@ -58,7 +58,7 @@ data.location.vcs.info(location)          // branch.current
 
 - `input` excludes `cache.read`/`cache.write`. If it did not, the app's context ring — which sums all five fields — would overrun 100% on cached sessions.
 - `reasoning` is its own field, not part of `output`.
-- `model.list` and `vcs.info` return `undefined` until synced; `window.tsx` syncs both once per routed session and every 30 s.
+- `model.list` and `vcs.info` return `undefined` until synced; `window.tsx` re-syncs vcs once per routed session and primes the model list only when the location's store is empty.
 - Git branch needs no main-process bridge: `data.location.vcs` already has it.
 
 ### OpenRouter balance
@@ -103,7 +103,7 @@ At packaging time the checklist was:
 
 ## Tests
 
-`npm test` runs `node --test` over `src/gui/metrics.test.ts` — no DOM, no bundler, Node's own type stripping. The cache-state matrix (warm/cold/stale/none × age) lives there because that is where the subtle bugs were: a provider that never caches must stay `none` however old the step, and a step past the TTL must not claim `warm`.
+`npm test` runs `node --test` over `src/gui/metrics.test.ts` and `src/gui/credits.test.ts` — no DOM, no bundler, Node's own type stripping. The credits cases lock the contract with the caller: no key resolves to `undefined`, a failed request throws. The cache-state matrix (warm/cold/stale/none × age) lives there because that is where the subtle bugs were: a provider that never caches must stay `none` however old the step, and a step past the TTL must not claim `warm`.
 
 Keep new pure logic in `metrics.ts` rather than in the component, so it stays testable.
 

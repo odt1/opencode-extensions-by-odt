@@ -132,7 +132,7 @@ export const setup: Plugin.Setup<typeof definition> = (ctx) => {
   const [credits, setCredits] = createSignal<Credits>()
   let failures = 0
   const load = () => {
-    void loadCredits(ctx.client)
+    void loadCredits(ctx.client, ctx.signal)
       .then((value) => {
         failures = 0
         setCredits(value)

@@ -10,7 +10,6 @@ export type Credits = {
 
 const ENDPOINT = "https://openrouter.ai/api/v1/credits"
 const TIMEOUT_MS = 10_000
-
 /**
  * The key OpenCode already uses for the provider, so the balance needs no
  * second credential. Undefined when the provider is connected another way,
@@ -29,26 +28,34 @@ async function openrouterKey(client: OpenCodeClient): Promise<string | undefined
 
 /**
  * Read where the call is made: `ctx.client` is a new object after the server
- * restarts. Every failure means "no balance to show" rather than an error the
- * user has to read, so an offline machine or a revoked key just drops the row.
+ * restarts. Two outcomes are kept apart on purpose:
+ *
+ * - `undefined` means the account has no OpenRouter key, which no retry can fix,
+ *   so the caller clears the row at once.
+ * - A failed request throws, so the caller can hold the last known balance
+ *   through a few attempts before dropping it.
  */
-export async function loadCredits(client: OpenCodeClient): Promise<Credits | undefined> {
+export async function loadCredits(client: OpenCodeClient, signal?: AbortSignal): Promise<Credits | undefined> {
   const key = await openrouterKey(client)
 
   if (!key) return undefined
 
   const response = await fetch(ENDPOINT, {
     headers: { Authorization: `Bearer ${key}` },
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    // Chromium 116+ (the desktop app's floor) and Node both implement `any`.
+    signal: signal ? AbortSignal.any([AbortSignal.timeout(TIMEOUT_MS), signal]) : AbortSignal.timeout(TIMEOUT_MS),
   })
 
-  if (!response.ok) return undefined
+  if (!response.ok) throw new Error(`OpenRouter credits: HTTP ${response.status}`)
 
   const body = (await response.json()) as { data?: { total_credits?: number; total_usage?: number } }
   const total = body.data?.total_credits
   const used = body.data?.total_usage
 
-  if (typeof total !== "number" || typeof used !== "number") return undefined
+  // A body the shape above does not describe is a failure, not an empty account:
+  // throwing keeps the last balance instead of blanking the row on one bad reply.
+  if (typeof total !== "number" || typeof used !== "number")
+    throw new Error("OpenRouter credits: unexpected response body")
 
   return { total, used, remaining: total - used, at: Date.now() }
 }
