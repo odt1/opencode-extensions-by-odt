@@ -1,0 +1,38 @@
+{
+  "name": "opencode-deepseek-adapt",
+  "version": "0.1.0",
+  "description": "DeepSeek-tuned prompt doctrine, subagent hand-off, repeat-call guard, clock, todo nudge and empty-reply recovery for OpenCode.",
+  "license": "MIT",
+  "author": "odt1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odt1/opencode-extensions-by-odt.git",
+    "directory": "packages/opencode-deepseek-adapt"
+  },
+  "homepage": "https://github.com/odt1/opencode-extensions-by-odt/tree/main/packages/opencode-deepseek-adapt#readme",
+  "bugs": {
+    "url": "https://github.com/odt1/opencode-extensions-by-odt/issues"
+  },
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src/index.js",
+    "README.md",
+    "MODEL-DRIVING.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "deepseek",
+    "prompt",
+    "harness",
+    "system-prompt"
+  ],
+  "scripts": {
+    "test": "node test/smoke.mjs",
+    "prepublishOnly": "npm test"
+  }
+}
