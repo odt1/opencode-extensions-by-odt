@@ -505,7 +505,7 @@ const todoNudge = (options, event, state) => {
 const whisper = (text) => ({ role: "user", content: [{ type: "text", text }] })
 
 export default {
-  id: "deepseek-adapt",
+  id: "opencode-deepseek-adapt",
   async setup(ctx) {
     const options = resolveOptions(ctx.options)
     const loops = new Map()

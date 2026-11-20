@@ -38,7 +38,7 @@ vite.config.ts        gui() preset from @opencode/plugin/gui/vite
 
 ### Why there is a server part at all
 
-The desktop app skips a plugin's GUI when its server part fails to load. A package with no server part does work, but then the plugin id comes from the package name instead. Declaring `id: "theme-background"` keeps the id independent of the npm name (`opencode-theme-background`).
+The desktop app skips a plugin's GUI when its server part fails to load. A package with no server part does work, but then the plugin id comes from the package name instead — and the id prefixes every contribution id and stored key, so it is the package name here anyway: `opencode-theme-background`.
 
 The server part is a plain `{ id, setup }` object rather than `Plugin.define`: that helper is identity, and importing it made `@opencode/plugin` a runtime dependency of a package that needs nothing at runtime. It is a devDependency for the build and its types only.
 

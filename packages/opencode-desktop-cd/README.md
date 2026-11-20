@@ -65,7 +65,7 @@ The move endpoint resolves `~`, relative paths, existence and directory-ness its
 
 ### Why the npm name is not `opencode-cd`
 
-`opencode-cd` was taken (a TUI plugin that also changes the session directory). The plugin id inside the package is independent of the npm name, so the package could be renamed again without changing contribution ids.
+`opencode-cd` was taken (a TUI plugin that also changes the session directory), so the package is `opencode-desktop-cd`. The plugin id is the same string as the package name, because it prefixes every contribution id and stored key the plugin creates — two names for one plugin is how you end up unable to find it in the app by the name you installed.
 
 ## Development
 

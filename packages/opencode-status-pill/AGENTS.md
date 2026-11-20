@@ -33,7 +33,7 @@ dist/gui-experimental.cjs  built bundle, committed so a clone needs no build
 
 ### Why there is a server part at all
 
-The desktop app skips a plugin's GUI when its server part fails to load. A package with no server part does work, but then the plugin id comes from the package name instead. Declaring `id: "status-pill"` keeps the id independent of the npm name (`opencode-status-pill`).
+The desktop app skips a plugin's GUI when its server part fails to load. A package with no server part does work, but then the plugin id comes from the package name instead — and the id prefixes every contribution id and stored key, so it is the package name here anyway: `opencode-status-pill`.
 
 ### Why only a ComposerPill
 

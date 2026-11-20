@@ -12,7 +12,9 @@ Same purpose as the per-package `AGENTS.md` files: the context that is not visib
 
 ## Why `opencode-cd` is published as `opencode-desktop-cd`
 
-`opencode-cd` was already taken on npm (v0.1.0, a TUI plugin that also changes the session directory) and so was `opencode-themes` (v1.0.0). The package names had to differ from the directory names the plugins started with. The plugin **id** in `Plugin.define` is deliberately independent of the npm name, so a future rename of the package does not change contribution ids or stored keys.
+`opencode-cd` was already taken on npm (v0.1.0, a TUI plugin that also changes the session directory) and so was `opencode-themes` (v1.0.0). Two package names had to change; the plugin ids changed with them.
+
+That is deliberate: a plugin's id prefixes every contribution id and stored key it creates, so an id that disagrees with the package name gives one plugin two names and makes it impossible to find in **Settings → Extensions → Plugins** by the name you installed. Nothing had shipped, so no stored key or keybind needed migrating. If a name ever changes after a release, the id must move with it *and* `Store.global`/`Store.session` need a `from` entry for the old keys.
 
 ## Shared platform traps
 

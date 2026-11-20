@@ -113,7 +113,7 @@ html { background-color: var(--v2-background-bg-base) !important; }
 
 ### Why the npm name is not `opencode-themes`
 
-`opencode-themes` was already taken on npm (1.0.2) when this was packaged. The plugin id inside the package is independent of the npm name.
+`opencode-themes` was already taken on npm (1.0.2) when this was packaged, so the package is `opencode-theme-background`. The plugin id is the same string as the package name, because it prefixes every contribution id and stored key the plugin creates.
 
 ## Develop
 

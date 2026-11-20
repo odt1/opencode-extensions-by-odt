@@ -6,7 +6,10 @@
 // whole client SDK, AWS, Redis and OpenTelemetry — a runtime dependency of a
 // package that needs nothing at runtime. The GUI bundle keeps `@opencode/*`
 // external and gets them from the app, so only the build needs the types.
+//
+// The id is the package name. It prefixes every contribution id and stored key
+// the plugin creates, so the two must not drift apart.
 export default {
-  id: "cd",
+  id: "opencode-desktop-cd",
   setup() {},
 }
