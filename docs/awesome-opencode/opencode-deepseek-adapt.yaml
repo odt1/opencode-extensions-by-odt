@@ -1,0 +1,30 @@
+name: opencode-deepseek-adapt
+repo: https://github.com/odt1/opencode-extensions-by-odt/tree/main/packages/opencode-deepseek-adapt
+tagline: DeepSeek-tuned prompt doctrine, loop guard, clock and empty-reply recovery
+description: >-
+  OpenCode writes a tuned system prompt for GPT, Claude, Kimi, Trinity and Muse,
+  and falls back to the generic one for DeepSeek. This server plugin ports the
+  DeepSeek-specific tuning from DeepSeek Harness and oh-my-pi: a one-sentence
+  tool doctrine appended to the live prompt, a subagent hand-off rule, a
+  repeat-tool-call guard with a 3/5/8 ladder, a sampled clock, a stale-todo
+  nudge, and recovery from a turn that ends with no text and no tool call.
+  Everything except the two prompt additions lands at the tail of the request,
+  so the cached prefix stays byte-stable. No core file is modified and nothing
+  needs rebasing on an OpenCode update. V2 only; 32 tests, no dependencies.
+scope:
+  - global
+tags:
+  - deepseek
+  - prompt
+  - system-prompt
+  - loop-guard
+  - cache
+homepage: https://www.npmjs.com/package/opencode-deepseek-adapt
+installation: |-
+  ```sh
+  opencode plugin add opencode-deepseek-adapt
+  ```
+
+  Restart OpenCode once. Options (all optional) are documented in the README;
+  the `todoNudge` feature additionally needs `experimental: { todo: true }`,
+  because OpenCode keeps the `todowrite` tool behind that flag in release builds.

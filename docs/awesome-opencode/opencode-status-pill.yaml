@@ -1,0 +1,30 @@
+name: opencode-status-pill
+repo: https://github.com/odt1/opencode-extensions-by-odt/tree/main/packages/opencode-status-pill
+tagline: Context fill, cache hit rate and OpenRouter balance in the composer pill row
+description: >-
+  A session readout in OpenCode Desktop's pill row, beside the app's own
+  background-work and todo pills: context fill, cache hit rate with
+  warm/cold/stale, and either the OpenRouter balance left or the session's
+  spend. Clicking it opens the full accounting — model, provider, git branch,
+  token breakdown, cache read/write, cost — and its first action opens the
+  app's built-in Context panel. Colour follows the data, and a stale balance or
+  an expired cache is labelled as such rather than asserted. Requires OpenCode
+  Desktop 2.3.0 or newer (V2 only).
+scope:
+  - global
+tags:
+  - desktop
+  - statusline
+  - context
+  - cache
+  - cost
+  - openrouter
+min_version: "2.3.0"
+homepage: https://www.npmjs.com/package/opencode-status-pill
+installation: |-
+  ```sh
+  opencode plugin add opencode-status-pill
+  ```
+
+  Restart OpenCode Desktop once. The OpenRouter credit row appears only when an
+  OpenRouter key is already stored in OpenCode; nothing else leaves the machine.

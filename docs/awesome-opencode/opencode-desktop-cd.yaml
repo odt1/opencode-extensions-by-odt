@@ -1,0 +1,27 @@
+name: opencode-desktop-cd
+repo: https://github.com/odt1/opencode-extensions-by-odt/tree/main/packages/opencode-desktop-cd
+tagline: /cd for OpenCode Desktop — move the current session to another directory and project
+description: >-
+  The CLI has a built-in /cd that moves a session to another directory; the
+  desktop app does not. This GUI plugin adds the same command to the composer,
+  with the native folder picker when no argument is given, ~ and relative paths
+  resolved by the server exactly as the CLI does, and a toast that distinguishes
+  "moved" from "queued until the current step finishes". Requires OpenCode
+  Desktop 2.3.0 or newer (V2 only). No dependencies, no build step.
+scope:
+  - global
+tags:
+  - desktop
+  - session
+  - directory
+  - command
+  - workflow
+min_version: "2.3.0"
+homepage: https://www.npmjs.com/package/opencode-desktop-cd
+installation: |-
+  ```sh
+  opencode plugin add opencode-desktop-cd
+  ```
+
+  Restart OpenCode Desktop once, then use `/cd` in the composer, or bind
+  **Change working directory** in Settings › Shortcuts.

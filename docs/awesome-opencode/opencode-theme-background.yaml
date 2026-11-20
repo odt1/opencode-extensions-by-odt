@@ -1,0 +1,37 @@
+name: opencode-theme-background
+repo: https://github.com/odt1/opencode-extensions-by-odt/tree/main/packages/opencode-theme-background
+tagline: Repaint the background of any OpenCode Desktop theme without replacing it
+description: >-
+  Desktop themes are not files on disk — they are plugin contributions — so
+  adjusting one has to be a plugin. This one contributes a stylesheet that
+  overrides the background tokens of whichever theme is selected, following
+  light and dark through the theme engine's data-color-scheme attribute. Set
+  base and deep backgrounds, and optionally the four raised-surface layers; the
+  selected theme's syntax, markdown and accent colours are untouched. Requires
+  OpenCode Desktop 2.3.0 or newer (V2 only).
+scope:
+  - global
+tags:
+  - desktop
+  - theme
+  - background
+  - colors
+  - appearance
+min_version: "2.3.0"
+homepage: https://www.npmjs.com/package/opencode-theme-background
+installation: |-
+  Add it with options — without a colour it does nothing:
+
+  ```jsonc
+  // ~/.config/opencode/opencode.json
+  {
+    "plugins": [
+      {
+        "package": "opencode-theme-background",
+        "options": { "light": "#f5f0e8", "dark": "#0b0b0b" }
+      }
+    ]
+  }
+  ```
+
+  Restart OpenCode Desktop once.
