@@ -36,6 +36,19 @@ export interface BackgroundOptions {
 const text = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim() ? value.trim() : undefined
 
+/**
+ * A colour that can be written into a declaration as-is. `opencode.json` is
+ * JSON, so any string can arrive; a stray `}` would close the rule and take the
+ * rest of the override with it, and the app has no way to report that. Legal CSS
+ * colours never need `;`, `{`, `}` or a newline, so rejecting those costs
+ * nothing.
+ */
+const color = (value: unknown): string | undefined => {
+  const parsed = text(value)
+
+  return parsed !== undefined && !/[;{}\n\r]/.test(parsed) ? parsed : undefined
+}
+
 const record = (value: unknown): Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value)
     ? (value as Record<string, unknown>)
@@ -44,7 +57,7 @@ const record = (value: unknown): Record<string, unknown> =>
 const list = (value: unknown): string[] | undefined => {
   if (!Array.isArray(value)) return undefined
 
-  const colors = value.map(text).filter((color): color is string => color !== undefined)
+  const colors = value.map(color).filter((entry): entry is string => entry !== undefined)
 
   return colors.length > 0 ? colors : undefined
 }
@@ -59,8 +72,8 @@ const list = (value: unknown): string[] | undefined => {
  * change, so these rules follow light and dark without replacing the theme.
  */
 export function backgroundCss(options: PluginOptions): string {
-  const light = text(options.light)
-  const dark = text(options.dark)
+  const light = color(options.light)
+  const dark = color(options.dark)
   const deep = record(options.deep)
   const layers = record(options.layers)
 
@@ -69,8 +82,8 @@ export function backgroundCss(options: PluginOptions): string {
   if (light) rules.push(`:root[data-color-scheme="light"] { --v2-background-bg-base: ${light}; }`)
   if (dark) rules.push(`:root[data-color-scheme="dark"] { --v2-background-bg-base: ${dark}; }`)
 
-  const deepLight = text(deep.light)
-  const deepDark = text(deep.dark)
+  const deepLight = color(deep.light)
+  const deepDark = color(deep.dark)
 
   if (deepLight) rules.push(`:root[data-color-scheme="light"] { --v2-background-bg-deep: ${deepLight}; }`)
   if (deepDark) rules.push(`:root[data-color-scheme="dark"] { --v2-background-bg-deep: ${deepDark}; }`)

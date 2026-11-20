@@ -54,3 +54,28 @@ test("wrongly typed input falls back to doing nothing instead of throwing", () =
   assert.equal(css({ light: 42, dark: ["#000"], deep: "nope", layers: "nope" }), "")
   assert.equal(css({ layers: { dark: "#0b0b0b" } }), "")
 })
+
+test("a value that would close the rule is ignored", () => {
+  // `opencode.json` is JSON: any string can arrive, and one stray brace would
+  // take the rest of the override with it.
+  assert.equal(css({ light: "red; } body { display: none }" }), "")
+  assert.equal(css({ dark: "#000\n}" }), "")
+
+  // Only the bad declaration disappears; the valid one beside it stays.
+  const mixed = css({ dark: "#000", deep: { dark: "rgb(0 0 0);}" } })
+  assert.match(mixed, /--v2-background-bg-base: #000;/)
+  assert.doesNotMatch(mixed, /bg-deep/)
+})
+
+test("a rejected layer is dropped without taking its siblings", () => {
+  const out = css({ dark: "#0b0b0b", layers: { dark: ["#1a1a1a", "bad}", "#2e2e2e"] } })
+  assert.match(out, /layer-01: #1a1a1a/)
+  assert.match(out, /layer-02: #2e2e2e/)
+  assert.doesNotMatch(out, /bad/)
+})
+
+test("legal functional colours survive the guard", () => {
+  const out = css({ light: "color-mix(in oklch, white 80%, black)", dark: "rgb(11 11 11 / 95%)" })
+  assert.match(out, /--v2-background-bg-base: color-mix\(in oklch, white 80%, black\);/)
+  assert.match(out, /--v2-background-bg-base: rgb\(11 11 11 \/ 95%\);/)
+})

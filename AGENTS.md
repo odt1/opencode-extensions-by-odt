@@ -7,7 +7,7 @@ Same purpose as the per-package `AGENTS.md` files: the context that is not visib
 - One plugin per directory under `packages/`. The directory name is the npm package name. Do not add a plugin that shares a directory with another.
 - Every package is published independently. A change to one package never bumps another's version, and never edits another package's `dist/`.
 - Every package carries its own `LICENSE` copy. npm only packs a licence file that lives inside the package directory, and `npm publish -w` packs the workspace, not the repository root.
-- `dist/` is committed for the three GUI plugins. `opencode plugin add` runs Arborist with `ignoreScripts: true`, so a `prepare` script never runs — Git-based and tarball installs must already contain the bundle.
+- `dist/` is committed for the four GUI plugins. `opencode plugin add` runs Arborist with `ignoreScripts: true`, so a `prepare` script never runs — Git-based and tarball installs must already contain the bundle.
 - `package.json` scripts run with the package directory as their working directory, so a `prepublishOnly` that checks `git diff -- dist` checks only its own bundle.
 
 ## Why `opencode-cd` is published as `opencode-desktop-cd`

@@ -30,8 +30,10 @@
 }
 
 :root [data-component="markdown"] a:hover {
-  color: var(--markdown-link, var(--v2-text-text-accent));
-  filter: brightness(1.15);
+  /* A colour shift rather than `filter`: a filter applies to the whole subtree,
+     so inline code inside a link would brighten even though the rule above
+     restores its own background. */
+  color: color-mix(in oklch, var(--markdown-link, var(--v2-text-text-accent)) 78%, var(--v2-text-text-base));
 }
 
 :root [data-component="markdown"] strong,
